@@ -22,6 +22,7 @@ def random_walk(
     eps=1e-3,
     random_state=0,
     copy=False,
+    use_transition_matrix = False, # Added for my own analysis, to use the transition matrix as probabilities
     **kwargs,
 ):
     """Runs a random walk on the evolocity graph.
@@ -109,7 +110,10 @@ def random_walk(
         for t in range(walk_length):
             path = []
             for w in range(n_walks):
-                prob = scipy.special.softmax(T[paths[w, t], :].toarray().ravel())
+                if use_transition_matrix == True:
+                    prob = T[paths[w, t], :].toarray().ravel()
+                else:
+                    prob = scipy.special.softmax(T[paths[w, t], :].toarray().ravel())
                 path.append(np.random.choice(n_nodes, p=prob))
             paths[:, t + 1] = path
 
